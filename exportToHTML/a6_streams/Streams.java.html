@@ -1,0 +1,181 @@
+<html>
+<head>
+<title>Streams.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #999999; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(0,0,128); font-weight: bold; }
+.s1 { color: rgb(0,0,0); }
+.s2 { color: rgb(128,128,128); font-style: italic; }
+.s3 { color: rgb(0,0,255); }
+.s4 { color: rgb(0,128,0); font-weight: bold; }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Streams.java</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">package </span><span class="s1">a6_streams; 
+ 
+</span><span class="s0">import </span><span class="s1">java.io.BufferedReader; 
+</span><span class="s0">import </span><span class="s1">java.io.FileNotFoundException; 
+</span><span class="s0">import </span><span class="s1">java.io.FileReader; 
+</span><span class="s0">import </span><span class="s1">java.io.IOException; 
+</span><span class="s0">import </span><span class="s1">java.math.BigDecimal; 
+</span><span class="s0">import </span><span class="s1">java.nio.file.Files; 
+</span><span class="s0">import </span><span class="s1">java.nio.file.Path; 
+</span><span class="s0">import </span><span class="s1">java.nio.file.Paths; 
+</span><span class="s0">import </span><span class="s1">java.time.DayOfWeek; 
+</span><span class="s0">import </span><span class="s1">java.time.LocalDate; 
+</span><span class="s0">import </span><span class="s1">java.time.Month; 
+</span><span class="s0">import </span><span class="s1">java.util.*; 
+</span><span class="s0">import </span><span class="s1">java.util.function.Consumer; 
+</span><span class="s0">import </span><span class="s1">java.util.function.Function; 
+</span><span class="s0">import </span><span class="s1">java.util.function.Predicate; 
+</span><span class="s0">import </span><span class="s1">java.util.function.Supplier; 
+</span><span class="s0">import </span><span class="s1">java.util.stream.Collector; 
+</span><span class="s0">import </span><span class="s1">java.util.stream.Collectors; 
+</span><span class="s0">import </span><span class="s1">java.util.stream.IntStream; 
+</span><span class="s0">import </span><span class="s1">java.util.stream.Stream; 
+ 
+</span><span class="s0">import static </span><span class="s1">java.util.stream.Collectors.groupingBy; 
+</span><span class="s0">import static </span><span class="s1">java.util.stream.Collectors.toList; 
+ 
+</span><span class="s2">/** 
+ * Created on 28.06.17. 
+ */</span><span class="s1"> 
+</span><span class="s0">public class </span><span class="s1">Streams { 
+    </span><span class="s0">static long </span><span class="s1">steps = </span><span class="s3">1</span><span class="s1">; 
+ 
+ 
+    </span><span class="s0">public static void </span><span class="s1">main(String[] args) </span><span class="s0">throws </span><span class="s1">IOException { 
+        Path path = Paths.get(</span><span class="s4">&quot;/Users/pawel/Desktop/IntelliJ-Projects/Tutorium/src/a6_streams/bible.txt&quot;</span><span class="s1">); 
+ 
+        </span><span class="s2">// 1)</span><span class="s1"> 
+ 
+</span><span class="s2">//        List&lt;String&gt; list = new ArrayList&lt;&gt;();</span><span class="s1"> 
+</span><span class="s2">//        list = Files.readAllLines(path).stream()</span><span class="s1"> 
+</span><span class="s2">//                .filter(e -&gt; e.matches(&quot;.* 3:16.*&quot;))</span><span class="s1"> 
+</span><span class="s2">//                .collect(Collectors.toList());</span><span class="s1"> 
+</span><span class="s2">//</span><span class="s1"> 
+</span><span class="s2">//        list.stream().forEach(System.out::println);</span><span class="s1"> 
+ 
+</span><span class="s2">//        Map&lt;String, Long&gt; map = Files.readAllLines(path).stream()</span><span class="s1"> 
+</span><span class="s2">//                .filter(e -&gt; e.matches(&quot;.* 3:16.*&quot;))</span><span class="s1"> 
+</span><span class="s2">//                .map(lines -&gt; lines.split(&quot;[\\W]&quot;))</span><span class="s1"> 
+</span><span class="s2">//                .flatMap(Stream::of)</span><span class="s1"> 
+</span><span class="s2">//                .filter(e -&gt; !e.matches(&quot;&quot;))</span><span class="s1"> 
+</span><span class="s2">//                .collect(groupingBy(e -&gt; e.toLowerCase(), Collectors.counting()));</span><span class="s1"> 
+</span><span class="s2">//        System.out.println(map);</span><span class="s1"> 
+</span><span class="s2">//</span><span class="s1"> 
+</span><span class="s2">//        System.out.println();</span><span class="s1"> 
+ 
+</span><span class="s2">//        Map&lt;String, Long&gt; map2 = Files.readAllLines(path).stream()</span><span class="s1"> 
+</span><span class="s2">//                .filter(e -&gt; e.matches(&quot;.* 3:16.*&quot;))</span><span class="s1"> 
+</span><span class="s2">//                .flatMap(line -&gt; Stream.of(line.split(&quot;[\\W]&quot;)))</span><span class="s1"> 
+</span><span class="s2">//                .filter(e -&gt; !e.matches(&quot;&quot;))</span><span class="s1"> 
+</span><span class="s2">//                .collect(groupingBy(String::toLowerCase, Collectors.counting()));</span><span class="s1"> 
+</span><span class="s2">//        System.out.println(map2);</span><span class="s1"> 
+ 
+        </span><span class="s2">//2.1 Fibonacci</span><span class="s1"> 
+ 
+        </span><span class="s2">//        int n0, n1 = 0, n2 = 1;</span><span class="s1"> 
+</span><span class="s2">//        for (double x = 0; x &lt; 25; x++) {</span><span class="s1"> 
+</span><span class="s2">//            n0 = n1;</span><span class="s1"> 
+</span><span class="s2">//            n1 = n2;</span><span class="s1"> 
+</span><span class="s2">//            n2 = n0 + n1;</span><span class="s1"> 
+</span><span class="s2">//            if (n0 &gt;= 2) System.out.println(n0);</span><span class="s1"> 
+</span><span class="s2">//        }</span><span class="s1"> 
+ 
+        System.out.print(</span><span class="s4">&quot;Fibonacci: &quot;</span><span class="s1">); 
+        Stream.generate(</span><span class="s0">new </span><span class="s1">FibMaker()).limit(</span><span class="s3">25</span><span class="s1">).forEach(e -&gt; System.out.print(e + </span><span class="s4">&quot; &quot;</span><span class="s1">)); 
+        System.out.println(); 
+ 
+        </span><span class="s2">//2.2 Collatz</span><span class="s1"> 
+        System.out.print(</span><span class="s4">&quot;Collatz: &quot;</span><span class="s1">); 
+        List&lt;Long&gt; list = </span><span class="s0">new </span><span class="s1">ArrayList&lt;&gt;(); 
+</span><span class="s2">//        Stream.generate(new CollatzMaker(200)).limit(1000).peek(list::add).anyMatch((a -&gt; a == 1));</span><span class="s1"> 
+        System.out.println(list); 
+ 
+ 
+        </span><span class="s2">// 2.3</span><span class="s1"> 
+        System.out.print(</span><span class="s4">&quot;Freitag der 13: &quot;</span><span class="s1">); 
+        Stream.iterate(LocalDate.of(</span><span class="s3">2017</span><span class="s1">, </span><span class="s3">1</span><span class="s1">, </span><span class="s3">1</span><span class="s1">), d -&gt; d.plusDays(</span><span class="s3">1</span><span class="s1">)) 
+                .limit(</span><span class="s3">365 </span><span class="s1">* </span><span class="s3">2</span><span class="s1">) 
+                .filter(d -&gt; d.getDayOfWeek() == DayOfWeek.FRIDAY) 
+                .filter(d -&gt; d.getDayOfMonth() == </span><span class="s3">13</span><span class="s1">) 
+                .forEach(d -&gt; System.out.print(d + </span><span class="s4">&quot; &quot;</span><span class="s1">)); 
+ 
+        System.out.println(); 
+ 
+        </span><span class="s2">// 2.4.1</span><span class="s1"> 
+ 
+        System.out.print(</span><span class="s4">&quot;1.Mai: &quot;</span><span class="s1">); 
+        Stream.iterate(LocalDate.of(</span><span class="s3">2017</span><span class="s1">,</span><span class="s3">1</span><span class="s1">,</span><span class="s3">1</span><span class="s1">), d -&gt; d.plusDays(</span><span class="s3">1</span><span class="s1">)) 
+                .limit(</span><span class="s3">365</span><span class="s1">*</span><span class="s3">50</span><span class="s1">) 
+                .filter(d -&gt; d.getMonth() == Month.MAY) 
+                .filter(d -&gt; d.getDayOfMonth() == </span><span class="s3">1</span><span class="s1">) 
+                .filter(d -&gt; (d.getDayOfWeek() == DayOfWeek.SUNDAY) || d.getDayOfWeek() == DayOfWeek.SATURDAY) 
+                .forEach(d -&gt; System.out.print(d + </span><span class="s4">&quot; &quot;</span><span class="s1">)); 
+ 
+        </span><span class="s2">//2.4.2</span><span class="s1"> 
+        System.out.print(</span><span class="s4">&quot;3.Oktober: &quot;</span><span class="s1">); 
+        Stream.iterate(LocalDate.of(</span><span class="s3">2017</span><span class="s1">,</span><span class="s3">1</span><span class="s1">,</span><span class="s3">1</span><span class="s1">), d -&gt; d.plusDays(</span><span class="s3">1</span><span class="s1">)) 
+                .limit(</span><span class="s3">365</span><span class="s1">*</span><span class="s3">50</span><span class="s1">) 
+                .filter(d -&gt; d.getMonth() == Month.OCTOBER) 
+                .filter(d -&gt; d.getDayOfMonth() == </span><span class="s3">3</span><span class="s1">) 
+                .filter(d -&gt; (d.getDayOfWeek() == DayOfWeek.SUNDAY) || d.getDayOfWeek() == DayOfWeek.SATURDAY) 
+                .forEach(d -&gt; System.out.print(d + </span><span class="s4">&quot; &quot;</span><span class="s1">)); 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+    } 
+ 
+ 
+    </span><span class="s0">public static class </span><span class="s1">FibMaker </span><span class="s0">implements </span><span class="s1">Supplier&lt;Long&gt; { 
+ 
+        </span><span class="s0">long </span><span class="s1">next; 
+        </span><span class="s0">private long </span><span class="s1">prev = </span><span class="s3">0</span><span class="s1">; 
+        </span><span class="s0">private long </span><span class="s1">current = </span><span class="s3">1</span><span class="s1">; 
+ 
+        @Override 
+        </span><span class="s0">public </span><span class="s1">Long get() { 
+            next = current + prev; 
+            prev = current; 
+            current = next; 
+            </span><span class="s0">return </span><span class="s1">prev; 
+        } 
+    } 
+ 
+    </span><span class="s0">public static class </span><span class="s1">CollatzMaker </span><span class="s0">implements </span><span class="s1">Supplier&lt;Long&gt; { 
+        </span><span class="s0">private long </span><span class="s1">start; 
+ 
+        </span><span class="s0">public </span><span class="s1">CollatzMaker(</span><span class="s0">long </span><span class="s1">start) { 
+            </span><span class="s0">this</span><span class="s1">.start = start; 
+        } 
+ 
+        @Override 
+        </span><span class="s0">public </span><span class="s1">Long get() { 
+            </span><span class="s0">if </span><span class="s1">(start == </span><span class="s3">0</span><span class="s1">) { 
+                start = </span><span class="s3">0</span><span class="s1">; 
+            } </span><span class="s0">else if </span><span class="s1">(start % </span><span class="s3">2 </span><span class="s1">== </span><span class="s3">0</span><span class="s1">) { 
+                start = start / </span><span class="s3">2</span><span class="s1">; 
+            } </span><span class="s0">else if </span><span class="s1">(start % </span><span class="s3">2 </span><span class="s1">== </span><span class="s3">1</span><span class="s1">) { 
+                start = </span><span class="s3">3 </span><span class="s1">* start + </span><span class="s3">1</span><span class="s1">; 
+            } 
+            </span><span class="s0">return </span><span class="s1">start; 
+        } 
+    } 
+ 
+} 
+ 
+</span></pre>
+</body>
+</html>

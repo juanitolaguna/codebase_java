@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: /Users/pawel/Desktop/IntelliJ-Projects/JuliaSet/src/JuliaS
+ et/Main.java
+Main-Class: JuliaSet.Main
+

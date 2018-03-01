@@ -1,0 +1,76 @@
+<html>
+<head>
+<title>Streams2.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(98,151,85); font-style: italic; }
+.s3 { color: rgb(104,151,187); }
+.s4 { color: rgb(128,128,128); }
+.s5 { color: rgb(106,135,89); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Streams2.java</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">package </span><span class="s1">a6_streams</span><span class="s0">;</span><span class="s1"> 
+ 
+</span><span class="s0">import </span><span class="s1">java.time.DayOfWeek</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">java.time.LocalDate</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">java.time.Month</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">java.util.ArrayList</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">java.util.LinkedList</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">java.util.List</span><span class="s0">;</span><span class="s1"> 
+</span><span class="s0">import </span><span class="s1">java.util.stream.Stream</span><span class="s0">;</span><span class="s1"> 
+ 
+</span><span class="s0">import static </span><span class="s1">java.time.temporal.ChronoUnit.DAYS</span><span class="s0">;</span><span class="s1"> 
+ 
+</span><span class="s2">/** 
+ * Created on 30.06.17. 
+ */</span><span class="s1"> 
+</span><span class="s0">public class </span><span class="s1">Streams2 { 
+ 
+ 
+    </span><span class="s0">public static void </span><span class="s1">main(String[] args) { 
+        LocalDate d1 = LocalDate.of(</span><span class="s3">2017</span><span class="s0">, </span><span class="s3">1</span><span class="s0">, </span><span class="s3">1</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+        LocalDate d2 = LocalDate.of(</span><span class="s3">2117</span><span class="s0">, </span><span class="s3">1</span><span class="s0">, </span><span class="s3">1</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+        getDistance(d1</span><span class="s0">,</span><span class="s1">d2)</span><span class="s0">;</span><span class="s1"> 
+ 
+ 
+    } 
+ 
+    </span><span class="s0">private static void </span><span class="s1">getDistance(LocalDate start</span><span class="s0">, </span><span class="s1">LocalDate limitvalue) { 
+        LinkedList&lt;LocalDate&gt; ll = </span><span class="s0">new </span><span class="s1">LinkedList&lt;&gt;()</span><span class="s0">;</span><span class="s1"> 
+        List&lt;Long&gt; averageDistance = </span><span class="s0">new </span><span class="s1">ArrayList&lt;&gt;()</span><span class="s0">;</span><span class="s1"> 
+        Long limit = DAYS.between(start</span><span class="s0">, </span><span class="s1">limitvalue)</span><span class="s0">;</span><span class="s1"> 
+ 
+        Stream.iterate(start</span><span class="s0">, </span><span class="s1">d -&gt; d.plusDays(</span><span class="s3">1</span><span class="s1">)) 
+                .limit(limit) 
+                .filter(d -&gt; d.getMonth() == Month.MAY) 
+                .filter(d -&gt; d.getDayOfMonth() == </span><span class="s3">1</span><span class="s1">) 
+                .filter(d -&gt; d.getDayOfWeek() == DayOfWeek.SATURDAY || d.getDayOfWeek() == DayOfWeek.SUNDAY) 
+</span><span class="s4">//                .forEach(d -&gt; System.out.println(d));</span><span class="s1"> 
+                .forEach(d -&gt; { 
+                    ll.addFirst(d)</span><span class="s0">;</span><span class="s1"> 
+                    </span><span class="s0">if </span><span class="s1">(ll.size() == </span><span class="s3">2</span><span class="s1">) { 
+                        averageDistance.add(DAYS.between(ll.get(</span><span class="s3">1</span><span class="s1">)</span><span class="s0">, </span><span class="s1">ll.get(</span><span class="s3">0</span><span class="s1">)))</span><span class="s0">;</span><span class="s1"> 
+                        ll.removeLast()</span><span class="s0">;</span><span class="s1"> 
+                    } 
+                })</span><span class="s0">;</span><span class="s1"> 
+ 
+        System.out.println( 
+                </span><span class="s5">&quot;MinDistance: &quot; </span><span class="s1">+ averageDistance.stream().min(Long::compareTo) + </span><span class="s5">&quot;</span><span class="s0">\n</span><span class="s5">&quot;</span><span class="s1"> 
+                + </span><span class="s5">&quot;MaxDistance: &quot; </span><span class="s1">+ averageDistance.stream().max(Long::compareTo) + </span><span class="s5">&quot;</span><span class="s0">\n</span><span class="s5">&quot;</span><span class="s1"> 
+                + </span><span class="s5">&quot;AverageDistance: &quot; </span><span class="s1">+ averageDistance.stream().mapToDouble(Long::doubleValue).average() 
+        )</span><span class="s0">;</span><span class="s1"> 
+    } 
+} 
+</span></pre>
+</body>
+</html>
