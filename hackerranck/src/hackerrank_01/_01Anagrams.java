@@ -38,6 +38,6 @@ public class _01Anagrams {
 
         int count = Arrays.stream(lettercounts).map(Math::abs).sum();
 
-        return count;
+        return count;  
     }
 }
